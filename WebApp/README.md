@@ -1,4 +1,15 @@
-1. ```npm install```
-2. ```npm install styled-components```
-3. ```npm start```
+
+## Project
+
+Use the following commands to run the project
+
+```bash
+  npm install
+```
+```bash
+  npm install styled-components
+```
+```bash
+  npm start
+```
 
