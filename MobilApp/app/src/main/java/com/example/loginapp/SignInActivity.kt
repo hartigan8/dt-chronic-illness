@@ -5,20 +5,25 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.loginapp.databinding.ActivitySignInBinding
-import com.google.firebase.auth.FirebaseAuth
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.Response
+import java.io.IOException
 
 class SignInActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignInBinding
-    private lateinit var firebaseAuth: FirebaseAuth
+    private val client = OkHttpClient() // HTTP istemcisi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignInBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-        firebaseAuth = FirebaseAuth.getInstance()
         binding.textView.setOnClickListener {
             val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
@@ -29,29 +34,39 @@ class SignInActivity : AppCompatActivity() {
             val pass = binding.passET.text.toString()
 
             if (email.isNotEmpty() && pass.isNotEmpty()) {
+                val requestBody = RequestBody.create(
+                    "application/json; charset=utf-8".toMediaTypeOrNull(),
+                    "{\"email\":\"$email\",\"password\":\"$pass\"}"
+                )
+                val request = Request.Builder()
+                    .url("http://localhost:8080/auth/")
+                    .post(requestBody)
+                    .build()
 
-                firebaseAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
-                    } else {
-                        Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
-
+                client.newCall(request).enqueue(object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
+                        runOnUiThread {
+                            Toast.makeText(this@SignInActivity, "İstek gönderilirken hata oluştu", Toast.LENGTH_SHORT).show()
+                        }
                     }
-                }
+
+                    override fun onResponse(call: Call, response: Response) {
+                        runOnUiThread {
+                            try {
+                                val responseText = response.body?.string()
+                                if (response.isSuccessful) {
+                                } else {
+                                    Toast.makeText(this@SignInActivity, "Kayıt başarısız: $responseText", Toast.LENGTH_SHORT).show()
+                                }
+                            } catch (e: Exception) {
+                                Toast.makeText(this@SignInActivity, "Bir hata oluştu: $e", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                })
             } else {
-                Toast.makeText(this, "Empty Fields Are not Allowed !!", Toast.LENGTH_SHORT).show()
-
+                Toast.makeText(this, "Boş alanlar kabul edilmez!", Toast.LENGTH_SHORT).show()
             }
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        if(firebaseAuth.currentUser != null){
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
         }
     }
 }

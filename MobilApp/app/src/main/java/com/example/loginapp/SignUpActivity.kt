@@ -5,48 +5,85 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.loginapp.databinding.ActivitySignUpBinding
-import com.google.firebase.auth.FirebaseAuth
+import okhttp3.*
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody
+import org.json.JSONObject
+import java.io.IOException
 
 class SignUpActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignUpBinding
-    private lateinit var firebaseAuth: FirebaseAuth
+    private val client = OkHttpClient()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivitySignUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        firebaseAuth = FirebaseAuth.getInstance()
 
         binding.textView.setOnClickListener {
             val intent = Intent(this, SignInActivity::class.java)
             startActivity(intent)
         }
+
         binding.button.setOnClickListener {
+            val name = binding.nameEt.text.toString()
+            val surname = binding.surnameET.text.toString()
+            val phoneNumber = binding.phoneNumberEt.text.toString()
             val email = binding.emailEt.text.toString()
-            val pass = binding.passET.text.toString()
+            val password = binding.passET.text.toString()
             val confirmPass = binding.confirmPassEt.text.toString()
 
-            if (email.isNotEmpty() && pass.isNotEmpty() && confirmPass.isNotEmpty()) {
-                if (pass == confirmPass) {
 
-                    firebaseAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            val intent = Intent(this, SignInActivity::class.java)
-                            startActivity(intent)
-                        } else {
-                            Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
+            if (email.isNotEmpty() && password.isNotEmpty() && phoneNumber.isNotEmpty() && surname.isNotEmpty() && name.isNotEmpty() && confirmPass.isNotEmpty()) {
+                if (password == confirmPass) {
+                    val requestBodyJson = JSONObject().apply {
+                        put("name", name)
+                        put("surname", surname)
+                        put("phoneNumber", phoneNumber)
+                        put("email", email)
+                        put("password", password)
+                        put("confirmPass", confirmPass)
 
-                        }
                     }
-                } else {
-                    Toast.makeText(this, "Password is not matching", Toast.LENGTH_SHORT).show()
+
+                    val requestBody = RequestBody.create(
+                        "application/json; charset=utf-8".toMediaTypeOrNull(),
+                        "{\"name\":\"$name\",\"surname\":\"$surname\",\"phoneNumber\":\"$phoneNumber\",\"email\":\"$email\",\"password\":\"$password\"}"
+                    )
+
+                    val request = Request.Builder()
+                        .url("http://localhost:8080/auth/register")
+                        .post(requestBody)
+                        .build()
+
+                        client.newCall(request).enqueue(object : Callback {
+                        override fun onFailure(call: Call, e: IOException) {
+                            runOnUiThread {
+                                Toast.makeText(this@SignUpActivity, "İstek gönderilirken hata oluştu", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+
+                        override fun onResponse(call: Call, response: Response) {
+                            val responseText = response.body?.string()
+                            runOnUiThread {
+                                if (response.isSuccessful) {
+                                    Toast.makeText(this@SignUpActivity, "Kayıt başarılı!", Toast.LENGTH_SHORT).show()
+                                    val intent = Intent(this@SignUpActivity, SignInActivity::class.java)
+                                    startActivity(intent)
+                                } else {
+                                    Toast.makeText(this@SignUpActivity, "Kayıt başarısız: $responseText", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                    })
+                }
+                else {
+                    Toast.makeText(this@SignUpActivity, "Şifreler eşleşmiyor", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(this, "Empty Fields Are not Allowed !!", Toast.LENGTH_SHORT).show()
-
+                Toast.makeText(this@SignUpActivity, "Boş alanlar kabul edilmez!", Toast.LENGTH_SHORT).show()
             }
         }
     }
