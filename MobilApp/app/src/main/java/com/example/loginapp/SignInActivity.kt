@@ -5,19 +5,14 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.loginapp.databinding.ActivitySignInBinding
-import okhttp3.Call
-import okhttp3.Callback
+import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
-import okhttp3.Response
 import java.io.IOException
 
 class SignInActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignInBinding
-    private val client = OkHttpClient() // HTTP istemcisi
+    private val client = OkHttpClient()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,45 +20,42 @@ class SignInActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.textView.setOnClickListener {
-            val intent = Intent(this, SignUpActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, SignUpActivity::class.java))
         }
 
         binding.button.setOnClickListener {
             val email = binding.emailEt.text.toString()
-            val pass = binding.passET.text.toString()
+            val password = binding.passET.text.toString()
 
-            if (email.isNotEmpty() && pass.isNotEmpty()) {
+            if (email.isNotEmpty() && password.isNotEmpty()) {
                 val requestBody = RequestBody.create(
                     "application/json; charset=utf-8".toMediaTypeOrNull(),
-                    "{\"email\":\"$email\",\"password\":\"$pass\"}"
+                    "{\"email\":\"$email\",\"password\":\"$password\"}"
                 )
                 val request = Request.Builder()
-                    .url("http://localhost:8080/auth/")
+                    .url("http://10.0.2.2:8080/auth/login")
                     .post(requestBody)
                     .build()
 
-                client.newCall(request).enqueue(object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
+                Thread {
+                    try {
+                        val response = client.newCall(request).execute()
                         runOnUiThread {
-                            Toast.makeText(this@SignInActivity, "İstek gönderilirken hata oluştu", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-
-                    override fun onResponse(call: Call, response: Response) {
-                        runOnUiThread {
-                            try {
-                                val responseText = response.body?.string()
-                                if (response.isSuccessful) {
-                                } else {
-                                    Toast.makeText(this@SignInActivity, "Kayıt başarısız: $responseText", Toast.LENGTH_SHORT).show()
-                                }
-                            } catch (e: Exception) {
-                                Toast.makeText(this@SignInActivity, "Bir hata oluştu: $e", Toast.LENGTH_SHORT).show()
+                            if (response.isSuccessful) {
+                                // Handle successful response
+                                Toast.makeText(this, "Giriş Başarılı", Toast.LENGTH_SHORT).show()
+                                // Navigate to another activity or update UI accordingly
+                            } else {
+                                // Handle unsuccessful response
+                                Toast.makeText(this, "Giriş başarısız", Toast.LENGTH_SHORT).show()
                             }
                         }
+                    } catch (e: IOException) {
+                        runOnUiThread {
+                            Toast.makeText(this, "İstek gönderilirken hata oluştu: $e", Toast.LENGTH_SHORT).show()
+                        }
                     }
-                })
+                }.start()
             } else {
                 Toast.makeText(this, "Boş alanlar kabul edilmez!", Toast.LENGTH_SHORT).show()
             }
