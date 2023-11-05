@@ -1,11 +1,14 @@
  import React from "react";
  import * as Components from './Components';
+ import { useState } from "react";
 
  function App() {
      const [signIn, toggle] = React.useState(true);
+     const [signUp, toggle2] = React.useState(false); 
+
       return(
           <Components.Container>
-              <Components.SignUpContainer signinIn={signIn}>
+              <Components.SignUpContainer signinUp={signUp}>
                   <Components.Form>
                       <Components.Title>Create Account</Components.Title>
                       <Components.Input type='text' placeholder='Name' />
@@ -43,7 +46,7 @@
                         <Components.Paragraph>
                             Enter Your personal details and start journey with us
                         </Components.Paragraph>
-                            <Components.GhostButton onClick={() => toggle(false)}>
+                            <Components.GhostButton onClick={() => toggle2(false)}>
                                 Sigin Up
                             </Components.GhostButton> 
                       </Components.RightOverlayPanel>
