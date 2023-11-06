@@ -1,6 +1,5 @@
 package com.example.loginapp
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -18,7 +17,6 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignUpBinding
     private val client = OkHttpClient()
 
-    @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySignUpBinding.inflate(layoutInflater)
@@ -40,15 +38,7 @@ class SignUpActivity : AppCompatActivity() {
 
             if (email.isNotEmpty() && password.isNotEmpty() && phoneNumber.isNotEmpty() && surname.isNotEmpty() && name.isNotEmpty() && confirmPass.isNotEmpty()) {
                 if (password == confirmPass) {
-                    val requestBodyJson = JSONObject().apply {
-                        put("name", name)
-                        put("surname", surname)
-                        put("phoneNumber", phoneNumber)
-                        put("email", email)
-                        put("password", password)
-                        put("confirmPass", confirmPass)
 
-                    }
 
                     val requestBody = RequestBody.create(
                         "application/json; charset=utf-8".toMediaTypeOrNull(),
@@ -56,36 +46,38 @@ class SignUpActivity : AppCompatActivity() {
                     )
 
                     val request = Request.Builder()
-                        .url("http://localhost:8080/auth/register")
+                        .url("http://10.0.2.2:8080/auth/login")
                         .post(requestBody)
                         .build()
 
-                        client.newCall(request).enqueue(object : Callback {
-                        override fun onFailure(call: Call, e: IOException) {
-                            runOnUiThread {
-                                Toast.makeText(this@SignUpActivity, "İstek gönderilirken hata oluştu", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-
-                        override fun onResponse(call: Call, response: Response) {
-                            val responseText = response.body?.string()
+                    Thread {
+                        try {
+                            val response = client.newCall(request).execute()
                             runOnUiThread {
                                 if (response.isSuccessful) {
-                                    Toast.makeText(this@SignUpActivity, "Kayıt başarılı!", Toast.LENGTH_SHORT).show()
-                                    val intent = Intent(this@SignUpActivity, SignInActivity::class.java)
-                                    startActivity(intent)
+                                    // Handle successful response
+                                    Toast.makeText(this, "Giriş Başarılı", Toast.LENGTH_SHORT)
+                                        .show()
+                                    // Navigate to another activity or update UI accordingly
                                 } else {
-                                    Toast.makeText(this@SignUpActivity, "Kayıt başarısız: $responseText", Toast.LENGTH_SHORT).show()
+                                    // Handle unsuccessful response
+                                    Toast.makeText(this, "Giriş başarısız", Toast.LENGTH_SHORT)
+                                        .show()
                                 }
                             }
+                        } catch (e: IOException) {
+                            runOnUiThread {
+                                Toast.makeText(
+                                    this,
+                                    "İstek gönderilirken hata oluştu: $e",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
-                    })
+                    }.start()
+                } else {
+                    Toast.makeText(this, "Boş alanlar kabul edilmez!", Toast.LENGTH_SHORT).show()
                 }
-                else {
-                    Toast.makeText(this@SignUpActivity, "Şifreler eşleşmiyor", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Toast.makeText(this@SignUpActivity, "Boş alanlar kabul edilmez!", Toast.LENGTH_SHORT).show()
             }
         }
     }
