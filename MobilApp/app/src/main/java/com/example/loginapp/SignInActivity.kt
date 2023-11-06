@@ -32,6 +32,7 @@ class SignInActivity : AppCompatActivity() {
                     "application/json; charset=utf-8".toMediaTypeOrNull(),
                     "{\"email\":\"$email\",\"password\":\"$password\"}"
                 )
+                
                 val request = Request.Builder()
                     .url("http://10.0.2.2:8080/auth/login")
                     .post(requestBody)
