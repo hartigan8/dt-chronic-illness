@@ -15,20 +15,15 @@ import java.util.Date;
 
 public class Weight {
 
-    @Id
     Long id;
 
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "patient_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
-    Patient patient;
+    private String weightType;
 
-    String weightType;
-    String result;
-    Date dateofMeasurement;
-    int targetWeight;
+    private String result;
+    @Id
+    private Date dateofMeasurement;
+    private Integer targetWeight;
 
 
 

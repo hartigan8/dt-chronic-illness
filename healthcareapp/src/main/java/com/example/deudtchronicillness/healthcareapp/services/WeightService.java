@@ -2,17 +2,20 @@ package com.example.deudtchronicillness.healthcareapp.services;
 
 import com.example.deudtchronicillness.healthcareapp.entities.Weight;
 import com.example.deudtchronicillness.healthcareapp.repos.WeightRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+//@Service
 public class WeightService {
 
     private WeightRepository weightRepository;
+    /*
     public List<Weight> getWeightById(Long patientId) {
-        return weightRepository.findByPatientId(patientId);
+        return weightRepository.findAllById(patientId);
     }
-
+    */
 
     public Weight saveWeightData(Weight newWeight) {
         return weightRepository.save(newWeight);

@@ -7,6 +7,8 @@ import lombok.Data;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.Date;
+
 @Entity
 @Table ( name = "step" )
 @Data
@@ -14,17 +16,13 @@ import org.hibernate.annotations.OnDeleteAction;
 
 public class Step {
 
+    private Long id;
+
+
+    private Integer targetstep;
+    private Integer endofTheDayStep;
+
     @Id
-    Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "patient_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
-    Patient patient;
-
-    int targetstep;
-    int endofTheDayStep;
-
+    private Date date;
 
 }

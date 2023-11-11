@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/weight")
+//@RestController
+//@RequestMapping("/weight")
 
 public class WeightController {
-
+    /*
     private WeightService weightService;
 
     public WeightController(WeightService weightService) {
@@ -36,5 +36,5 @@ public class WeightController {
     public void deleteWeightData(@PathVariable Long patientId){
         weightService.deleteWeightDataById(patientId);
     }
-
+    */
 }
