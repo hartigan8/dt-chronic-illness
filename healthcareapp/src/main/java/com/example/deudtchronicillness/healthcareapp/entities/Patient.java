@@ -1,13 +1,12 @@
 package com.example.deudtchronicillness.healthcareapp.entities;
 
-;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
+
+;import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -18,16 +17,9 @@ public class Patient {
     Long id;
 
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
-    User user;
-
-
     String name;
     String surname;
     int height;
-    Date dateOfBirth;
+    LocalDate dateOfBirth;
 
 }
