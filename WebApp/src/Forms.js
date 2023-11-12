@@ -66,6 +66,9 @@ function Forms() {
     const handleRegisterPassword = (value) =>{
         setRegisterPassword(value)
     }
+    const handleRegisterConfirmPassword = (value) =>{
+        setRegisterPassword(value)
+    }
     const handleRegisterSubmit = async (event) => {
         event.preventDefault(); // Prevent the form from submitting naturally
         /*
@@ -160,8 +163,8 @@ function Forms() {
                 <Components.SignUpContainer signinIn={login}>
                     <Components.Form onSubmit={nextStep}>
                         <Components.Title>Create Account</Components.Title>
-                        <Components.Input type='phonenumber' placeholder='Phonenumber' onChange={(e) => handleRegisterPhoneNumber(e.target.value)} />
-                        <Components.Input type='height' placeholder='Height' onChange={(e) => handleRegisterHeight(e.target.value)} />                       
+                        <Components.Input type='number' placeholder='Phonenumber' onChange={(e) => handleRegisterPhoneNumber(e.target.value)} />
+                        <Components.Input type='number' placeholder='Height' onChange={(e) => handleRegisterHeight(e.target.value)} />                       
                         <select value={gender} onChange={(e) => handleGender(e.target.value)}>
                             <option value="">Select Gender</option>
                             <option value="male">Male</option>
@@ -180,9 +183,9 @@ function Forms() {
                     <Components.Form onSubmit={handleRegisterSubmit}>
                         <Components.Title>Create Account</Components.Title>
                         <Components.Input type='password' placeholder='Password' onChange={(e) => handleRegisterPassword(e.target.value)} />
-                        <Components.Input type='confirmpassoword' placeholder='Confirm Password' onChange={(e) => handleRegisterPassword(e.target.value)} />
+                        <Components.Input type='password' placeholder='Confirm Password' onChange={(e) => handleRegisterConfirmPassword(e.target.value)} />
                         <div style={{ display: 'flex', justifyContent: 'space-around', margin: '10px' }}>
-                        <Components.Button type="submit">Next</Components.Button>
+                        <Components.Button type="submit">submit</Components.Button>
                         <Components.Button1 onClick={prevStep}>Previous</Components.Button1>
                         </div>
                     </Components.Form>
