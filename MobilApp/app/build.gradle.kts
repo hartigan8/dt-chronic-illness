@@ -40,6 +40,7 @@ android {
 }
 
 dependencies {
+    implementation("androidx.health:health-services-client:1.1.0-alpha01")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

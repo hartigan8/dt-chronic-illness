@@ -64,6 +64,24 @@
  width: 100%;
  `;
  
+ export const Button1 = styled.button`
+    border-radius: 15px;
+    border: 1px solid #ff4b2b;
+    background-color: #ff4b2b;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 8px 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: transform 80ms ease-in;
+    &:active{
+        transform: scale(0.95);
+    }
+    &:focus {
+        outline: ;
+    }
+ `;
 
  export const Button = styled.button`
     border-radius: 20px;
@@ -72,7 +90,7 @@
     color: #ffffff;
     font-size: 12px;
     font-weight: bold;
-    padding: 12px 45px;
+    padding: 8px 20px;
     letter-spacing: 1px;
     text-transform: uppercase;
     transition: transform 80ms ease-in;

@@ -14,3 +14,10 @@ body {
   height: 100vh;
   margin: -20px 0 50px;
 }
+.select-gender {
+  appearance: none;
+  padding: 8px;
+  border: 1px solid #4e1414;
+  border-radius: 5px;
+  background-size: 20px;
+}

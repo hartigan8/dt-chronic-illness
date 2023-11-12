@@ -10,7 +10,47 @@ function Forms() {
     const [registerMail, setRegisterMail] = React.useState('');
     const [registerPassword, setRegisterPassword] = React.useState('');
     const [registerName, setRegisterName] = React.useState('');
+    const [registerSurname, setRegisterSurname] = React.useState('');
+    const [registerPhonenumber, setRegisterPhonenumber] = React.useState('');
+    const [registerHeight, setRegisterHeight] = React.useState('');
+    const [step, setStep] = React.useState(1);
+    const [gender, setGender]= React.useState('');
     let navigate = useNavigate();
+    const nextStep = () => {
+        if (step === 1) {
+            if (registerName === '' || registerSurname === '' || registerMail === '') {
+                console.log('Please fill in all fields for Step 1');
+                return;
+            }
+            setStep(step + 1);
+        } else if (step === 2) {
+            if (registerPhonenumber === '' || registerHeight === '' || gender === '') {
+                console.log('Please fill in all fields for Step 2');
+                return;
+            }
+            setStep(step + 1);
+        } else if (step === 3) {
+            if (registerPassword === '') {
+                console.log('Please fill in all fields for Step 3');
+                return;
+            }
+        }
+    };
+    const prevStep = () => {
+        setStep(step - 1);
+    };
+    const handleGender = (value) =>{
+        setGender(value)
+    }
+    const handleRegisterHeight = (value) =>{
+        setRegisterHeight(value)
+    }
+    const handleRegisterSurnaname = (value) =>{
+        setRegisterSurname(value)
+    }
+    const handleRegisterPhoneNumber = (value) =>{
+        setRegisterPhonenumber(value)
+    }
     const handleRegisterName = (value) =>{
         setRegisterName(value)
     }
@@ -42,7 +82,10 @@ function Forms() {
                 },
                 body: JSON.stringify({
                     name: registerName,
+                    Surname: registerSurname,
                     email: registerMail,
+                    Phonenumber: registerPhonenumber,
+                    height : registerHeight,
                     password: registerPassword,
                 }),
             });
@@ -62,6 +105,7 @@ function Forms() {
             console.error('Error during registration:', error);
         }
     };
+   
     
     const handleLoginSubmit = async (event) => {
         event.preventDefault(); // Prevent the form from submitting naturally
@@ -101,15 +145,49 @@ function Forms() {
 
     return (
     <Components.Container>
-        <Components.SignUpContainer signinIn={login}>
-            <Components.Form onSubmit={handleRegisterSubmit}>
-                <Components.Title>Create Account</Components.Title>
-                <Components.Input type='text' placeholder='Name' onChange={(e) => handleRegisterName(e.target.value)} />
-                <Components.Input type='email' placeholder='Email' onChange={(e) => handleRegisterEmail(e.target.value)} />
-                <Components.Input type='password' placeholder='Password' onChange={(e) => handleRegisterPassword(e.target.value)} />
-                <Components.Button type="submit">Sign Up</Components.Button>
-            </Components.Form>
-        </Components.SignUpContainer>
+        {step === 1 && (
+                <Components.SignUpContainer signinIn={login}>
+                    <Components.Form onSubmit={nextStep}>
+                        <Components.Title>Create Account</Components.Title>
+                        <Components.Input type='text' placeholder='Name' onChange={(e) => handleRegisterName(e.target.value)} />
+                        <Components.Input type='text' placeholder='Surname' onChange={(e) => handleRegisterSurnaname(e.target.value)} />
+                        <Components.Input type='email' placeholder='Email' onChange={(e) => handleRegisterEmail(e.target.value)} />
+                        <Components.Button type="submit">Next</Components.Button>
+                    </Components.Form>
+                </Components.SignUpContainer>
+            )}
+            {step === 2 && (
+                <Components.SignUpContainer signinIn={login}>
+                    <Components.Form onSubmit={nextStep}>
+                        <Components.Title>Create Account</Components.Title>
+                        <Components.Input type='phonenumber' placeholder='Phonenumber' onChange={(e) => handleRegisterPhoneNumber(e.target.value)} />
+                        <Components.Input type='height' placeholder='Height' onChange={(e) => handleRegisterHeight(e.target.value)} />                       
+                        <select value={gender} onChange={(e) => handleGender(e.target.value)}>
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>                       
+                        <div style={{ display: 'flex', justifyContent: 'space-around', margin: '10px' }}>
+                        <Components.Button type="submit">Next</Components.Button>
+                        <Components.Button1 onClick={prevStep}>Previous</Components.Button1>
+                        </div>
+                    </Components.Form>
+                </Components.SignUpContainer>
+            )}
+            {step === 3 && (
+                <Components.SignUpContainer signinIn={login}>
+                    <Components.Form onSubmit={handleRegisterSubmit}>
+                        <Components.Title>Create Account</Components.Title>
+                        <Components.Input type='password' placeholder='Password' onChange={(e) => handleRegisterPassword(e.target.value)} />
+                        <Components.Input type='confirmpassoword' placeholder='Confirm Password' onChange={(e) => handleRegisterPassword(e.target.value)} />
+                        <div style={{ display: 'flex', justifyContent: 'space-around', margin: '10px' }}>
+                        <Components.Button type="submit">Next</Components.Button>
+                        <Components.Button1 onClick={prevStep}>Previous</Components.Button1>
+                        </div>
+                    </Components.Form>
+                </Components.SignUpContainer>
+            )}
 
         <Components.SignInContainer signinIn={login}>
             <Components.Form onSubmit={handleLoginSubmit}>
